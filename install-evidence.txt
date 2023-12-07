@@ -1,0 +1,38 @@
+# if you need nodejs/npm, do this otherwise skip it
+Mac - brew install npm
+Windows - download here https://nodejs.org/en/download
+Linux - https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04#option-2-installing-node-js-with-apt-using-a-nodesource-ppa
+
+# once you have npm, continue on!
+
+# do everything hereafter from your dbt project directory!
+cd nyc_transit
+
+# initial setup (do this once)
+npx degit evidence-dev/template reports
+npm --prefix ./reports install
+# evidence live preview needs duckdb file in its root
+ln -s ../../main.db reports/
+
+git add reports
+git commit -m 'add evidence'
+
+# end initial setup
+
+# browse live pages
+npm --prefix ./reports run dev
+# browse to http://localhost:3000/settings/
+# and set your duckdb filename to main.db
+# ^C to stop
+
+
+# build static pages
+export EVIDENCE_DATABASE=duckdb
+export EVIDENCE_DUCKDB_FILENAME=../main.db
+npm --prefix ./reports run build
+
+# serve static pages
+python3 -m http.server -d reports/build 8080
+# browse to http://localhost:8080
+# ^C to stop
+
